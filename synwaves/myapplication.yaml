@@ -1,41 +1,31 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: my-app-ns
+  name: demo
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
 
 ---
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
-  name: my-app-sa
-  namespace: my-app-ns
+  name: app-config
+  namespace: demo
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: my-app-secrets
-  namespace: my-app-ns
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
-type: Opaque
 data:
-  DB_ROOT_PASSWORD: dGhlcmVpc25vcGFzc3dvcmQK
+  APP_NAME: "My Demo App"
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-app
-  namespace: my-app-ns
+  namespace: demo
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: my-app
@@ -44,30 +34,27 @@ spec:
       labels:
         app: my-app
     spec:
-      serviceAccountName: my-app-sa
       containers:
-        - name: mysql
-          image: mysql:latest
+        - name: nginx
+          image: nginx:latest
           env:
-            - name: MYSQL_ROOT_PASSWORD
+            - name: APP_NAME
               valueFrom:
-                secretKeyRef:
-                  name: my-app-secrets
-                  key: DB_ROOT_PASSWORD
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_NAME
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: my-app-service
-  namespace: my-app-ns
+  namespace: demo
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   selector:
     app: my-app
   ports:
-    - protocol: TCP
-      port: 3306
-      targetPort: 3306
-  type: ClusterIP
+    - port: 80
+      targetPort: 80
