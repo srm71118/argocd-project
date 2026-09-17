@@ -15,6 +15,14 @@ metadata:
     argocd.argoproj.io/sync-wave: "-1"
 data:
   APP_NAME: "My Demo App"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-app-sa
+  namespace: my-app-ns
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
 
 ---
 apiVersion: apps/v1
