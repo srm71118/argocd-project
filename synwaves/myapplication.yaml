@@ -20,7 +20,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: my-app-sa
-  namespace: my-app-ns
+  namespace: demo
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 
