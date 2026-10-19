@@ -4,5 +4,7 @@ kind: ConfigMap
 metadata:
   name: delete-confirm-test
   namespace: redhat
+  annotations:
+    argocd.argoproj.io/sync-options: Delete=confirm
 data:
-  message: "Testing application-level Delete=confirm"
+  message: "Testing resource-level Delete=confirm"
