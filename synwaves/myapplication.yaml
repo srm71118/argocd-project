@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: app-config
-  namespace: demo
+  namespace: my-app-ns
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 data:
@@ -12,7 +12,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: my-app-sa-1
-  namespace: demo
+  namespace: my-app-ns
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 ---
