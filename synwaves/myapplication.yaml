@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   name: my-app-ns
   labels:
-     area: my-app-ns
+    area: my-app-ns
   annotations:
     argocd.argoproj.io/sync-wave: "-5"
 ---
@@ -24,7 +24,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-2"
 type: Opaque
 data:
-  DB_ROOT_PASSWORD: dGhlcmVpc25vcGFzc3dvcmQK  # "password" in base64
+  DB_ROOT_PASSWORD: cGFzc3dvcmQ=
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,7 +34,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: my-app
@@ -43,17 +43,18 @@ spec:
       labels:
         app: my-app
     spec:
+      serviceAccountName: my-app-sa
       containers:
-      - name: boxone
-        image: docker.io/library/mysql:latest
-        env:
-        # Define an environment variable named APP_DB_USER
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: my-app-secrets # Name of your Secret object
-              key: DB_ROOT_PASSWORD # Key inside the Secret
-        
+        - name: boxone
+          image: mysql:8.4
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-app-secrets
+                  key: DB_ROOT_PASSWORD
 ---
 apiVersion: v1
 kind: Service
@@ -66,7 +67,7 @@ spec:
   selector:
     app: my-app
   ports:
-  - protocol: TCP
-    port: 3306
-    targetPort: 3306
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
   type: ClusterIP
