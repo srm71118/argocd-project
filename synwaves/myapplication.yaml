@@ -1,3 +1,4 @@
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -61,7 +62,7 @@ spec:
       labels:
         app: my-app
     spec:
-      serviceAccountName: my-app-sa
+      serviceAccountName: my-app-sa-2
       containers:
         - name: boxone
           image: mysql:8.4
@@ -89,3 +90,4 @@ spec:
       port: 3306
       targetPort: 3306
   type: ClusterIP
+```
